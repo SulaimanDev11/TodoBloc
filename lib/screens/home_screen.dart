@@ -23,7 +23,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    todoBloc.setStream();
   }
 
   @override
@@ -85,8 +84,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                         todoBloc.addTask(AddTodoModal(
                                             title: titleController.text,
                                             description: descController.text));
-                                        titleController.clear();
-                                        descController.clear();
                                       },
                                     ),
                                   ],
@@ -99,14 +96,18 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             SizedBox(height: 10),
             CategButton(
-              icon: Icons.list_alt,
+              icon: Icons.forward,
               onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ToDoScreen(title: 'ToDo List')));
+                        builder: (context) => ToDoScreen(
+                              title: 'ToDo List',
+                              object: todoBloc,
+                            )));
               },
             ),
+
             // StreamBuilder<int>(
             //     stream: todoBloc.stram,
             //     builder: (context, snapshot) {
