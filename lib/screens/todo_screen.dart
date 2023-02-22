@@ -1,8 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:todo_bloc/bloc/todo_bloc.dart';
 import 'package:todo_bloc/modal/add_todo_modal.dart';
+import 'package:todo_bloc/screens/favorite.dart';
 
 class ToDoScreen extends StatefulWidget {
   ToDoScreen({super.key, required this.title, required this.object});
@@ -20,40 +18,62 @@ class _ToDoScreenState extends State<ToDoScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FavoriteScreen(
+                            title: 'ToDo List',
+                            todoBloc: widget.object,
+                          )));
+            },
+            icon: Icon(Icons.route),
+          ),
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           StreamBuilder<List<AddTodoModal>>(
-              stream: widget.object.getStream,
-              builder: (context, snapshot) {
-                return snapshot.hasData
-                    ? ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (ctx, index) {
-                          return Card(
-                            child: ListTile(
-                              leading:
-                                  CircleAvatar(child: Text('${index + 1}')),
-                              title: Text('${snapshot.data![index].title}'),
-                              subtitle:
-                                  Text('${snapshot.data![index].description}'),
-                              trailing: IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () {
-                                  widget.object.deleteTask(index);
-                                },
+            stream: widget.object.getStream,
+            builder: (context, snapshot) {
+              return snapshot.hasData
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (ctx, index) {
+                        return Card(
+                          child: ListTile(
+                            leading: IconButton(
+                              icon: const Icon(
+                                Icons.favorite_border,
+                                color: Colors.grey,
                               ),
+                              onPressed: () {
+                                widget.object.addFavTask(index);
+                              },
+                            ), //CircleAvatar(child: Text('${index + 1}')),
+                            title: Text('${snapshot.data![index].title}'),
+                            subtitle:
+                                Text('${snapshot.data![index].description}'),
+                            trailing: IconButton(
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                widget.object.deleteTask(index);
+                              },
                             ),
-                          );
-                        },
-                      )
-                    : const Center(child: CircularProgressIndicator());
-              })
+                          ),
+                        );
+                      },
+                    )
+                  : const Center(child: CircularProgressIndicator());
+            },
+          ),
         ],
       ),
     );
